@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AES Encryption System</title>
+  <title>AES šifravimo sistema</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -9,42 +9,42 @@
 
 <div class="container">
 
-  <h2>AES Encryption / Decryption System</h2>
+  <h2>AES šifravimo / dešifravimo sistema</h2>
 
   <form action="process.php" method="post" enctype="multipart/form-data">
 
-    <label>Operation</label>
+    <label>Operacija</label>
     <select name="operation">
-      <option value="encrypt">Encrypt</option>
-      <option value="decrypt">Decrypt</option>
+      <option value="encrypt">Šifruoti</option>
+      <option value="decrypt">Dešifruoti</option>
     </select>
 
-    <label>Encryption Mode</label>
+    <label>Šifravimo veiksena</label>
     <select name="mode">
       <option value="ECB">ECB</option>
       <option value="CBC">CBC</option>
       <option value="CFB">CFB</option>
     </select>
 
-    <label>Key Length</label>
+    <label>Rakto ilgis</label>
     <select name="key_length">
-      <option value="128">128</option>
-      <option value="192">192</option>
-      <option value="256">256</option>
+      <option value="128">128 bitų</option>
+      <option value="192">192 bitų</option>
+      <option value="256">256 bitų</option>
     </select>
 
-    <label>Secret Key</label>
+    <label>Slaptas raktas</label>
     <input type="text" name="key" required>
 
-    <label>Plaintext / Ciphertext</label>
+    <label>Atviras tekstas / Šifruotas tekstas</label>
     <textarea name="text" rows="6"></textarea>
 
-    <label>OR Upload Ciphertext File (.txt)</label>
+    <label>ARBA įkelkite šifruoto teksto failą (.txt)</label>
     <input type="file" name="file">
 
     <br><br>
 
-    <button type="submit">Execute</button>
+    <button type="submit">Vykdyti</button>
 
   </form>
 
