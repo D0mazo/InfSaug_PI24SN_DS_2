@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AES Encryption System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+  <h2>AES Encryption / Decryption System</h2>
+
+  <form action="process.php" method="post" enctype="multipart/form-data">
+
+    <label>Operation</label>
+    <select name="operation">
+      <option value="encrypt">Encrypt</option>
+      <option value="decrypt">Decrypt</option>
+    </select>
+
+    <label>Encryption Mode</label>
+    <select name="mode">
+      <option value="ECB">ECB</option>
+      <option value="CBC">CBC</option>
+      <option value="CFB">CFB</option>
+    </select>
+
+    <label>Key Length</label>
+    <select name="key_length">
+      <option value="128">128</option>
+      <option value="192">192</option>
+      <option value="256">256</option>
+    </select>
+
+    <label>Secret Key</label>
+    <input type="text" name="key" required>
+
+    <label>Plaintext / Ciphertext</label>
+    <textarea name="text" rows="6"></textarea>
+
+    <label>OR Upload Ciphertext File (.txt)</label>
+    <input type="file" name="file">
+
+    <br><br>
+
+    <button type="submit">Execute</button>
+
+  </form>
+
+</div>
+
+</body>
+</html>
