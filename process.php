@@ -1,74 +1,75 @@
 <?php
 
-function transformKey($key,$length)
+function transformuotiRaktoIlgi($raktas, $ilgis)
 {
-    $hash = hash('sha256',$key,true);
+    $hash = hash('sha256', $raktas, true);
 
-    if($length == 128)
-        return substr($hash,0,16);
+    if ($ilgis == 128)
+        return substr($hash, 0, 16);
 
-    if($length == 192)
-        return substr($hash,0,24);
+    if ($ilgis == 192)
+        return substr($hash, 0, 24);
 
-    if($length == 256)
-        return substr($hash,0,32);
+    if ($ilgis == 256)
+        return substr($hash, 0, 32);
 }
 
-$operation = $_POST['operation'];
-$mode = $_POST['mode'];
-$key_length = $_POST['key_length'];
-$key_input = $_POST['key'];
 
-if(empty($key_input))
-{
-    die("Key cannot be empty");
+$operacija = $_POST['operation'];
+$veiksena = $_POST['mode'];
+$rakto_ilgis = $_POST['key_length'];
+$ivestas_raktas = $_POST['key'];
+
+
+if (empty($ivestas_raktas)) {
+    die("Klaida: slaptas raktas negali būti tuščias.");
 }
 
-$key = transformKey($key_input,$key_length);
 
-$cipher = "AES-".$key_length."-".$mode;
+$raktas = transformuotiRaktoIlgi($ivestas_raktas, $rakto_ilgis);
 
-$text = $_POST['text'];
+$sifravimo_algoritmas = "AES-" . $rakto_ilgis . "-" . $veiksena;
 
-if(isset($_FILES['file']) && $_FILES['file']['size'] > 0)
-{
-    $text = file_get_contents($_FILES['file']['tmp_name']);
+
+$tekstas = $_POST['text'];
+
+
+if (isset($_FILES['file']) && $_FILES['file']['size'] > 0) {
+    $tekstas = file_get_contents($_FILES['file']['tmp_name']);
 }
 
-$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($cipher));
 
-if($operation == "encrypt")
-{
+$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($sifravimo_algoritmas));
 
-    $encrypted = openssl_encrypt($text,$cipher,$key,0,$iv);
 
-    $result = base64_encode($iv.$encrypted);
+if ($operacija == "encrypt") {
 
-    file_put_contents("result.txt",$result);
+    $uzsifruotas = openssl_encrypt($tekstas, $sifravimo_algoritmas, $raktas, 0, $iv);
 
-    echo "<h2>Encrypted Text</h2>";
-    echo "<textarea rows='10' cols='70'>$result</textarea>";
+    $rezultatas = base64_encode($iv . $uzsifruotas);
+
+    file_put_contents("rezultatas.txt", $rezultatas);
+
+    echo "<h2>Užšifruotas tekstas</h2>";
+    echo "<textarea rows='10' cols='70'>" . htmlspecialchars($rezultatas) . "</textarea>";
     echo "<br><br>";
-    echo "<a href='result.txt' download>Download .txt file</a>";
+    echo "<a href='rezultatas.txt' download>Atsisiųsti .txt failą</a>";
 
 }
+else {
 
-else
-{
+    $duomenys = base64_decode($tekstas);
 
-    $data = base64_decode($text);
+    $iv_ilgis = openssl_cipher_iv_length($sifravimo_algoritmas);
 
-    $iv_length = openssl_cipher_iv_length($cipher);
+    $iv = substr($duomenys, 0, $iv_ilgis);
 
-    $iv = substr($data,0,$iv_length);
+    $sifrotekstas = substr($duomenys, $iv_ilgis);
 
-    $ciphertext = substr($data,$iv_length);
+    $desifruotas = openssl_decrypt($sifrotekstas, $sifravimo_algoritmas, $raktas, 0, $iv);
 
-    $decrypted = openssl_decrypt($ciphertext,$cipher,$key,0,$iv);
-
-    echo "<h2>Decrypted Text</h2>";
-    echo "<textarea rows='10' cols='70'>$decrypted</textarea>";
-
+    echo "<h2>Iššifruotas tekstas</h2>";
+    echo "<textarea rows='10' cols='70'>" . htmlspecialchars($desifruotas) . "</textarea>";
 }
 
 ?>
