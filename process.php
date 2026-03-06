@@ -15,7 +15,7 @@ $rakto_ilgis=$_POST['key_length'];
 $raktas_input=$_POST['key'];
 
 if(empty($raktas_input)){
-    echo "Klaida: raktas negali būti tuščias.";
+    echo "Klaida: slaptas raktas negali būti tuščias.";
     exit;
 }
 
@@ -29,7 +29,14 @@ if(isset($_FILES['file']) && $_FILES['file']['size']>0){
     $tekstas=file_get_contents($_FILES['file']['tmp_name']);
 }
 
+if(empty($tekstas)){
+    echo "Klaida: tekstas negali būti tuščias.";
+    exit;
+}
+
 $iv_ilgis=openssl_cipher_iv_length($cipher);
+
+
 
 if($operacija=="encrypt"){
 
@@ -37,16 +44,33 @@ if($operacija=="encrypt"){
 
     $encrypted=openssl_encrypt($tekstas,$cipher,$raktas,0,$iv);
 
+    if($encrypted===false){
+        echo "Klaida: nepavyko užšifruoti teksto.";
+        exit;
+    }
+
     $rezultatas=$iv_ilgis>0
         ? base64_encode($iv.$encrypted)
         : base64_encode($encrypted);
 
     echo $rezultatas;
-
 }
+
+
+
 else{
 
-    $data=base64_decode($tekstas);
+    $data=base64_decode($tekstas,true);
+
+    if($data===false){
+        echo "Klaida: įvestas tekstas nėra teisingas šifruotas (Base64) tekstas.";
+        exit;
+    }
+
+    if(strlen($data) < $iv_ilgis){
+        echo "Klaida: šifruotas tekstas per trumpas arba sugadintas.";
+        exit;
+    }
 
     if($iv_ilgis>0){
         $iv=substr($data,0,$iv_ilgis);
@@ -58,8 +82,12 @@ else{
 
     $decrypted=openssl_decrypt($ciphertext,$cipher,$raktas,0,$iv);
 
-    echo $decrypted;
+    if($decrypted===false){
+        echo "Klaida: nepavyko iššifruoti teksto. Patikrinkite raktą, šifravimo modą arba rakto ilgį.";
+        exit;
+    }
 
+    echo $decrypted;
 }
 
 ?>
