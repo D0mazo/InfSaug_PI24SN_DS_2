@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>AES šifravimo sistema</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -9,9 +10,9 @@
 
 <div class="container">
 
-  <h2>AES šifravimo / dešifravimo sistema</h2>
+  <h1>AES šifravimas / dešifravimas</h1>
 
-  <form action="process.php" method="post" enctype="multipart/form-data">
+  <form id="aesForm">
 
     <label>Operacija</label>
     <select name="operation">
@@ -19,7 +20,7 @@
       <option value="decrypt">Dešifruoti</option>
     </select>
 
-    <label>Šifravimo veiksena</label>
+    <label>Šifravimo modas</label>
     <select name="mode">
       <option value="ECB">ECB</option>
       <option value="CBC">CBC</option>
@@ -36,19 +37,42 @@
     <label>Slaptas raktas</label>
     <input type="text" name="key" required>
 
-    <label>Atviras tekstas / Šifruotas tekstas</label>
+    <label>Tekstas</label>
     <textarea name="text" rows="6"></textarea>
 
-    <label>ARBA įkelkite šifruoto teksto failą (.txt)</label>
+    <label>Arba įkelkite .txt failą</label>
     <input type="file" name="file">
-
-    <br><br>
 
     <button type="submit">Vykdyti</button>
 
   </form>
 
+  <h3>Rezultatas</h3>
+
+  <textarea id="result" rows="8" readonly></textarea>
+
 </div>
+
+<script>
+
+  document.getElementById("aesForm").addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    let formData = new FormData(this);
+
+    fetch("process.php",{
+      method:"POST",
+      body:formData
+    })
+            .then(response => response.text())
+            .then(data => {
+              document.getElementById("result").value = data;
+            });
+
+  });
+
+</script>
 
 </body>
 </html>
