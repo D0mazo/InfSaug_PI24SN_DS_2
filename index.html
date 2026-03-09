@@ -8,50 +8,106 @@
 
 <body>
 
-<div class="container">
+<div class="wrapper">
 
-  <h1>AES šifravimas / dešifravimas</h1>
+  <div class="container">
 
-  <form id="aesForm">
+    <h1>AES šifravimas / dešifravimas</h1>
 
-    <label>Operacija</label>
-    <select name="operation">
-      <option value="encrypt">Šifruoti</option>
-      <option value="decrypt">Dešifruoti</option>
-    </select>
+    <form id="aesForm">
 
-    <label>Šifravimo modas</label>
-    <select name="mode">
-      <option value="ECB">ECB</option>
-      <option value="CBC">CBC</option>
-      <option value="CFB">CFB</option>
-    </select>
+      <label>Operacija</label>
+      <select name="operation">
+        <option value="encrypt">Šifruoti</option>
+        <option value="decrypt">Dešifruoti</option>
+      </select>
 
-    <label>Rakto ilgis</label>
-    <select name="key_length">
-      <option value="128">128 bitų</option>
-      <option value="192">192 bitų</option>
-      <option value="256">256 bitų</option>
-    </select>
+      <label>Šifravimo modas</label>
+      <select name="mode">
+        <option value="ECB">ECB</option>
+        <option value="CBC">CBC</option>
+        <option value="CFB">CFB</option>
+      </select>
 
-    <label>Slaptas raktas</label>
-    <input type="text" name="key" required>
+      <label>Rakto ilgis</label>
+      <select name="key_length">
+        <option value="128">128 bitų</option>
+        <option value="192">192 bitų</option>
+        <option value="256">256 bitų</option>
+      </select>
 
-    <label>Tekstas</label>
-    <textarea name="text" rows="6"></textarea>
+      <label>Slaptas raktas</label>
+      <input type="text" name="key" required>
 
-    <label>Arba įkelkite .txt failą</label>
-    <input type="file" name="file">
+      <label>Tekstas</label>
+      <textarea name="text" rows="6"></textarea>
 
-    <button type="submit">Vykdyti</button>
+      <label>Arba įkelkite .txt failą</label>
+      <input type="file" name="file">
 
-  </form>
+      <button type="submit">Vykdyti</button>
 
-  <h3>Rezultatas</h3>
+    </form>
 
-  <textarea id="result" rows="8" readonly></textarea>
+    <h3>Rezultatas</h3>
+
+    <textarea id="result" rows="8" readonly></textarea>
+    <button id="downloadBtn">Atsisiųsti rezultatą (.txt)</button>
+
+  </div>
+
+
+  <div class="info">
+
+    <h2>AES paaiškinimas</h2>
+
+    <p>
+      <b>AES (Advanced Encryption Standard)</b> yra simetrinis šifravimo algoritmas,
+      naudojamas duomenų apsaugai. Tas pats slaptas raktas naudojamas tiek
+      šifravimui, tiek dešifravimui.
+    </p>
+
+    <h3>Šifravimo modai</h3>
+
+    <p><b>ECB</b> – kiekvienas blokas šifruojamas atskirai. Tai paprasčiausias,
+      bet mažiausiai saugus metodas.</p>
+
+    <p><b>CBC</b> – kiekvienas blokas priklauso nuo ankstesnio bloko.
+      Naudojamas inicijavimo vektorius (IV).</p>
+
+    <p><b>CFB</b> – leidžia šifruoti duomenis kaip srautą ir taip pat
+      naudoja IV.</p>
+
+    <h3>Rakto ilgis</h3>
+
+    <ul>
+      <li>128 bitų</li>
+      <li>192 bitų</li>
+      <li>256 bitų</li>
+    </ul>
+
+    <p>
+      Kuo raktas ilgesnis, tuo daugiau kombinacijų reikia patikrinti
+      bandant jį nulaužti brutalia jėga.
+    </p>
+
+    <h3>Rakto transformavimas</h3>
+
+    <p>
+      Vartotojo įvestas raktas transformuojamas naudojant SHA-256
+      maišos funkciją ir sutrumpinamas iki reikalingo ilgio:
+    </p>
+
+    <ul>
+      <li>16 baitų → AES-128</li>
+      <li>24 baitų → AES-192</li>
+      <li>32 baitų → AES-256</li>
+    </ul>
+
+  </div>
 
 </div>
+
 
 <script>
 
@@ -69,6 +125,28 @@
             .then(data => {
               document.getElementById("result").value = data;
             });
+
+  });
+
+  document.getElementById("downloadBtn").addEventListener("click", function(){
+
+    let text = document.getElementById("result").value;
+
+    if(text === ""){
+      alert("Nėra rezultato atsisiuntimui.");
+      return;
+    }
+
+    let blob = new Blob([text], {type: "text/plain"});
+    let url = window.URL.createObjectURL(blob);
+
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = "aes_result.txt";
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 
   });
 

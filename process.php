@@ -42,7 +42,7 @@ if($operacija=="encrypt"){
 
     $iv=$iv_ilgis>0 ? random_bytes($iv_ilgis) : "";
 
-    $encrypted=openssl_encrypt($tekstas,$cipher,$raktas,0,$iv);
+    $encrypted=openssl_encrypt($tekstas,$cipher,$raktas,OPENSSL_RAW_DATA,$iv);
 
     if($encrypted===false){
         echo "Klaida: nepavyko užšifruoti teksto.";
@@ -80,7 +80,7 @@ else{
         $ciphertext=$data;
     }
 
-    $decrypted=openssl_decrypt($ciphertext,$cipher,$raktas,0,$iv);
+    $decrypted=openssl_decrypt($ciphertext,$cipher,$raktas,OPENSSL_RAW_DATA,$iv);
 
     if($decrypted===false){
         echo "Klaida: nepavyko iššifruoti teksto. Patikrinkite raktą, šifravimo modą arba rakto ilgį.";
